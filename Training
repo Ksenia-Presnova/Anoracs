@@ -7,7 +7,9 @@ import pygame
 def draw(screen):
     screen.fill((0, 0, 0))
     font = pygame.font.Font(None, 200)
-    text = font.render("Обучение\nW, A, D - Кнопки управления прыжок, влево, вправо\nКак только закончите осваиваться ...", True, "#ffd700")
+    text = font.render(
+        "Обучение\nW, A, D - Кнопки управления прыжок, влево, вправо\nКак только закончите осваиваться ...", True,
+        "#ffd700")
     text_x = 0
     text_y = 0
     text_w = 200
@@ -66,10 +68,7 @@ class Main_Hero(pygame.sprite.Sprite):
             self.rect = self.rect.move(0, self.step)
 
         elif args and args[1][2]:
-            self.rect = self.rect.move(0, -self.step*4)
-
-
-
+            self.rect = self.rect.move(0, -self.step * 4)
 
 
 if __name__ == '__main__':
