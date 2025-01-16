@@ -1,6 +1,96 @@
-import pygame
 import os
 import sys
+
+import pygame
+
+
+def draw(screen):
+    global running
+    im = pygame.transform.scale(pygame.image.load("victory_screen.png"), (1060, 800))
+    screen.blit(im, (0, 0))
+
+
+class Main_Hero(pygame.sprite.Sprite):
+    pygame.init()
+    screen = pygame.display.set_mode((100, 100))
+    image = pygame.image.load("Hero_p1.png").convert_alpha()
+    image1 = pygame.transform.scale(image, (202, 202))
+
+    def __init__(self, *group):
+        super().__init__(group)
+        self.image_p2 = pygame.transform.scale(pygame.image.load("Hero_p2.png"), (202, 202))
+        self.image_p1 = pygame.transform.scale(pygame.image.load("Hero_p1.png"), (202, 202))
+        self.image_p2_2 = pygame.transform.scale(pygame.image.load("Hero_p2_2.png"), (202, 202))
+        self.image_p1_2 = pygame.transform.scale(pygame.image.load("Hero_p1_2.png"), (202, 202))
+        self.image = Main_Hero.image1
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 413
+        self.y = self.rect.y
+        self.size = [202, 202]
+        self.step = 15
+
+    def check_win(self):
+        if self.rect.x >= 800 and self.rect.y == 413:
+            return True
+        return False
+
+    def check(self):
+        if (self.rect.x <= 180 and self.rect.y < 413) or (790 <= self.rect.x <= 1060 and self.rect.y < 413):
+            self.rect.y = 413
+        elif 175 < self.rect.x < 790 and self.rect.y < 500:
+            self.rect.y = 500
+
+    def update(self, *args, **kwargs):
+        print(args)
+        if args and args[1][1] and self.rect.x + self.step < width - 100:
+            self.rect = self.rect.move(self.step, 0)
+            if self.image == self.image_p2:
+                self.image = self.image_p1
+            else:
+                self.image = self.image_p2
+            self.check()
+        elif args and args[1][0] and self.rect.x - self.step + 90 > 0:
+            self.rect = self.rect.move(-self.step, 0)
+            if self.image == self.image_p2_2:
+                self.image = self.image_p1_2
+            else:
+                self.image = self.image_p2_2
+            self.check()
+        elif args and args[1][2]:
+            self.rect = self.rect.move(0, -self.step * 8)
+        if pygame.sprite.spritecollideany(self, args[2]) and self.rect.y == 500:
+            self.rect.x = 0
+            self.rect.y = self.y
+            args[3].rect.x = 1500
+        if self.check_win():
+            screen.fill(pygame.Color('black'))
+            draw(screen)
+
+
+class Slime(pygame.sprite.Sprite):
+    pygame.init()
+    screen = pygame.display.set_mode((100, 100))
+    image = pygame.image.load("Slime.png").convert_alpha()
+    image1 = pygame.transform.scale(image, (100, 100))
+
+    def __init__(self, *group, mobs):
+        super().__init__(mobs)
+        self.size = [100, 100]
+        self.image = self.image1
+        self.rect = self.image.get_rect()
+        self.start_x = 3000
+        self.rect.x = self.start_x
+        self.rect.y = 604
+        self.border = 265
+        self.step = 5
+
+    def update(self, *args, **kwargs):
+        # print(self.rect.x)
+        if self.rect.x - 10 <= 0:
+            self.rect.x = self.start_x
+        else:
+            self.rect = self.rect.move(-self.step, 0)
 
 
 # Сделано Ксенией
@@ -129,6 +219,10 @@ def load_image(name, colorkey=None):
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 def ochistka():
     all_sprites.empty()
+    # Спрайты уровень 1
+    all_sprites1.empty()
+    mobs1.empty()
+
     objects.clear()
     fons.clear()
     texts.clear()
@@ -162,7 +256,8 @@ def vibor_personazha(x):
     cord_x_2 = (width - shirina) / 2 + width / 4
     cord_y_2 = (height - visota) / 2 + height / 8
     AnimatedSprite(pygame.transform.scale(load_image('Personazh.png'), (shirina * 4, visota)), 4, 1, cord_x_1, cord_y_1)
-    AnimatedSprite(pygame.transform.scale(load_image('Personazh2.png'), (shirina * 4, visota)), 4, 1, cord_x_2, cord_y_2)
+    AnimatedSprite(pygame.transform.scale(load_image('Personazh2.png'), (shirina * 4, visota)), 4, 1, cord_x_2,
+                   cord_y_2)
     Button(10, 10, 100, 100, '<===', vibor_urovna)
 
     svoi_text('Просто нажимайте на клавиатуру!!!', 10, height - 90, color=(200, 200, 255))
@@ -191,77 +286,178 @@ def vibor_personazha(x):
 # Сделано Ксенией
 # Данная функция загружает первый уровень игры
 def uroven_1(personazh, ima):
-    # 
-    # Ксения:
-    # Здесь должна происходить загрузка уровня
-    # 
-    # 
-    pass
+    # Сделано Кириллом
+    ochistka()
+
+    pygame.init()
+
+    size = width, height = 1060, 800
+    screen = pygame.display.set_mode(size)
+
+    # Спрайт отвечающий за задний фон(небо)
+    sky = pygame.sprite.Sprite()
+    sky.image = load_image("sky.png")
+    sky.rect = sky.image.get_rect()
+    sky.rect.x = 0
+    sky.rect.y = 0
+    all_sprites1.add(sky)
+
+    # Лес
+
+    forest = pygame.sprite.Sprite()
+    forest.image = pygame.transform.scale(pygame.image.load("forest.png"), (916, 687))
+    forest.rect = sky.image.get_rect()
+    forest.rect.x = 0
+    forest.rect.y = 0
+    all_sprites1.add(forest)
+
+    # Слайм
+
+    Slime1 = Slime
+    Slime1.rect = Slime.image.get_rect()
+    Slime1.rect.x = 795
+    Slime1.rect.y = 604
+    Slime1(mobs=mobs1)
+
+    # Блок слева
+    grass = pygame.sprite.Sprite()
+    grass.image = load_image("grass.png")
+    grass.rect = grass.image.get_rect()
+    grass.rect.x = 0
+    grass.rect.y = 600
+    all_sprites1.add(grass)
+
+    # Блок справа
+
+    grass = pygame.sprite.Sprite()
+    grass.image = load_image("grass.png")
+    grass.rect = grass.image.get_rect()
+    grass.rect.x = 895
+    grass.rect.y = 600
+    all_sprites1.add(grass)
+
+    # Трава\Земля
+
+    for i in range(4):
+        grass = pygame.sprite.Sprite()
+        grass.image = load_image("grass.png")
+        grass.rect = grass.image.get_rect()
+        grass.rect.x = i * 265
+        grass.rect.y = 687
+        all_sprites1.add(grass)
+
+    # Герой
+
+    Hero = Main_Hero
+    Hero.rect = Hero.image.get_rect()
+    Hero.rect.x = 0
+    Hero.rect.y = 500
+    Hero(all_sprites1)
+
+    running1 = True
+    N = 10
+    to_left, to_right, to_up = False, False, False
+
+    while running1:
+        for event in pygame.event.get():
+            if Hero.check_win(Hero):
+                running1 = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    to_left = True
+                if event.key == pygame.K_RIGHT:
+                    to_right = True
+                if event.key == pygame.K_UP:
+                    to_up = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    to_left = False
+                if event.key == pygame.K_RIGHT:
+                    to_right = False
+                if event.key == pygame.K_UP:
+                    to_up = False
+            if event.type == pygame.QUIT:
+                running1 = False
+            all_sprites1.update(event, [to_left, to_right, to_up], mobs1, Slime1)
+            mobs1.update()
+            # draw(screen)
+        mobs1.update()
+        screen.fill(pygame.Color('white'))
+
+        all_sprites1.draw(screen)
+        mobs1.draw(screen)
+        # draw(screen)
+        pygame.display.flip()
+    draw(screen)
+
+    size = width, height = 1000, 600
+    screen = pygame.display.set_mode(size)
+    vibor_urovna()
 
 
 # Сделано Ксенией
 # Данная функция загружает второй уровень игры
 def uroven_2(personazh, ima):
-    # 
+    #
     # Ксения:
     # Здесь должна происходить загрузка уровня
-    # 
-    # 
+    #
+    #
     pass
 
 
 # Сделано Ксенией
 # Данная функция загружает третий уровень игры
 def uroven_3(personazh, ima):
-    # 
+    #
     # Ксения:
     # Здесь должна происходить загрузка уровня
-    # 
-    # 
+    #
+    #
     pass
 
 
 # Сделано Ксенией
 # Данная функция загружает четвертый уровень игры
 def uroven_4(personazh, ima):
-    # 
+    #
     # Ксения:
     # Здесь должна происходить загрузка уровня
-    # 
-    # 
+    #
+    #
     pass
 
 
 # Сделано Ксенией
 # Данная функция загружает пятый уровень игры
 def uroven_5(personazh, ima):
-    # 
+    #
     # Ксения:
     # Здесь должна происходить загрузка уровня
-    # 
-    # 
+    #
+    #
     pass
 
 
 # Сделано Ксенией
 # Данная функция загружает шестой уровень игры
 def uroven_6(personazh, ima):
-    # 
+    #
     # Ксения:
     # Здесь должна происходить загрузка уровня
-    # 
-    # 
+    #
+    #
     pass
 
 
 # Сделано Ксенией
 # Данная функция загружает окно статистики из бд
 def statistika():
-    # 
+    #
     # Ксения:
     # Доделаю после первого готового уровня. Сейчас не на чем тестировать данную функцию
-    # 
-    # 
+    #
+    #
     pass
 
 
@@ -296,6 +492,9 @@ if __name__ == '__main__':
     objects = []
     fons = []
     texts = []
+
+    all_sprites1 = pygame.sprite.Group()
+    mobs1 = pygame.sprite.Group()
 
     startovoe_okno()
 
