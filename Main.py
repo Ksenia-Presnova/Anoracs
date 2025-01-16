@@ -5,7 +5,6 @@ import pygame
 
 
 def draw(screen):
-    global running
     im = pygame.transform.scale(pygame.image.load("victory_screen.png"), (1060, 800))
     screen.blit(im, (0, 0))
 
@@ -31,7 +30,7 @@ class Main_Hero(pygame.sprite.Sprite):
         self.step = 15
 
     def check_win(self):
-        if self.rect.x >= 800 and self.rect.y == 413:
+        if self.rect.x >= 790 and self.rect.y == 413:
             return True
         return False
 
@@ -42,7 +41,8 @@ class Main_Hero(pygame.sprite.Sprite):
             self.rect.y = 500
 
     def update(self, *args, **kwargs):
-        print(args)
+        # print(args)
+        # print(self.rect.x, self.rect.y)
         if args and args[1][1] and self.rect.x + self.step < width - 100:
             self.rect = self.rect.move(self.step, 0)
             if self.image == self.image_p2:
@@ -64,6 +64,10 @@ class Main_Hero(pygame.sprite.Sprite):
             self.rect.y = self.y
             args[3].rect.x = 1500
         if self.check_win():
+            ochistka()
+            pygame.init()
+            size = 1060, 800
+            screen = pygame.display.set_mode(size)
             screen.fill(pygame.Color('black'))
             draw(screen)
 
@@ -388,7 +392,8 @@ def uroven_1(personazh, ima):
         mobs1.draw(screen)
         # draw(screen)
         pygame.display.flip()
-    draw(screen)
+    if Hero.check_win(Hero):
+        draw(screen)  # Функция отображает конец уровня и выводит экран окончания
 
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
