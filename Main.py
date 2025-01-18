@@ -1,5 +1,6 @@
 import os
 import sys
+import sqlite3 as qt
 
 import pygame
 
@@ -64,12 +65,15 @@ class Main_Hero(pygame.sprite.Sprite):
             self.rect.y = self.y
             args[3].rect.x = 1500
         if self.check_win():
-            ochistka()
+            # ochistka()
             pygame.init()
             size = 1060, 800
             screen = pygame.display.set_mode(size)
             screen.fill(pygame.Color('black'))
             draw(screen)
+            # Редактировано Ксенией
+            # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
+            pamat('Имя персонажа', 0, 0, 1)
 
 
 class Slime(pygame.sprite.Sprite):
@@ -175,8 +179,11 @@ class fonoviy_sloy():
         self.image = load_image(puth_to_file)
         fons.append(self)
 
-    def zapusk(self):
-        screen.blit(pygame.transform.scale(self.image, (width, height)), [0, 0])
+    def zapusk(self, shirina=0, visota=0):
+        if shirina == 0 or visota == 0:
+            screen.blit(pygame.transform.scale(self.image, (width, height)), [0, 0])
+        else:
+            screen.blit(pygame.transform.scale(self.image, (shirina, visota)), [0, 0])
 
 
 # Сделано Ксенией
@@ -390,6 +397,12 @@ def uroven_1(personazh, ima):
 
         all_sprites1.draw(screen)
         mobs1.draw(screen)
+        # Добавлено Ксенией. Нужно для отображения итогового окна
+        for fon in fons:
+            fon.zapusk(width, height)
+        for text in texts:
+            text.otrisovka()
+        # -------------------
         # draw(screen)
         pygame.display.flip()
     if Hero.check_win(Hero):
@@ -458,12 +471,40 @@ def uroven_6(personazh, ima):
 # Сделано Ксенией
 # Данная функция загружает окно статистики из бд
 def statistika():
-    #
-    # Ксения:
-    # Доделаю после первого готового уровня. Сейчас не на чем тестировать данную функцию
-    #
-    #
-    pass
+    ochistka()
+    fonoviy_sloy('Spisok_resultatov.png')
+    connection = qt.connect('my_database.db')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM history')
+    history = cursor.fetchall()
+
+    i = 0
+    for el in history:
+        if i < 5:
+            svoi_text(str(el[1]) + '  ' +
+                      'Уровень - ' + str(el[3]) + '  ' +
+                      'Время - ' + str(el[2]) + 'с.  ' +
+                      'Скин - ' + str(el[4]),
+                      150, 150 + i * 50, color=(0, 0, 150))
+        i += 1
+
+    connection.close()
+    Button(10, 10, 100, 100, '<===', startovoe_okno)
+
+
+# Сделано Ксенией
+# Данная функция загружает окно с результатами пользователя о прохождении уровня, а также сохраняет их в бд
+def pamat(ima, vrema, skin, uroven):
+    ochistka()
+    fonoviy_sloy('Vospominanie.png')
+    svoi_text(str(ima), width // 2, height // 2, color=(0, 0, 0))
+    svoi_text('Время: ' + str(vrema), width // 2, height // 2 + 40, color=(0, 0, 0))
+    connection = qt.connect('my_database.db')
+    cursor = connection.cursor()
+    cursor.execute('INSERT INTO history (name, time, skin, level) VALUES (?, ?, ?, ?)',
+                   (ima, vrema, skin, uroven))
+    connection.commit()
+    connection.close()
 
 
 # Сделано Ксенией
@@ -486,8 +527,27 @@ def startovoe_okno():
 
 
 # Сделано Ксенией
+# Данная функция создает бд в случае ее отсутствия
+def sozdanie_bd():
+    connection = qt.connect('my_database.db')
+    cursor = connection.cursor()
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS history (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    time INTEGER,
+    skin INTEGER, 
+    level INTEGER
+    )
+    ''')
+    connection.commit()
+    connection.close()
+
+
+# Сделано Ксенией
 # Запуск программы
 if __name__ == '__main__':
+    sozdanie_bd()
     pygame.init()
 
     size = width, height = 1000, 600
