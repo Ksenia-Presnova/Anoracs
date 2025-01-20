@@ -1,6 +1,6 @@
 import os
-import sys
 import sqlite3 as qt
+import sys
 
 import pygame
 
@@ -10,6 +10,7 @@ def draw(screen):
     screen.blit(im, (0, 0))
 
 
+# Спрайты уровень 1
 class Main_Hero(pygame.sprite.Sprite):
     pygame.init()
     screen = pygame.display.set_mode((100, 100))
@@ -101,6 +102,106 @@ class Slime(pygame.sprite.Sprite):
             self.rect = self.rect.move(-self.step, 0)
 
 
+# Спрайты уровень 2
+class Main_Hero2(pygame.sprite.Sprite):
+    pygame.init()
+    screen = pygame.display.set_mode((100, 100))
+    image = pygame.image.load("Hero_p1.png").convert_alpha()
+    image1 = pygame.transform.scale(image, (202, 202))
+
+    def __init__(self, *group):
+        super().__init__(group[0])
+        self.image_p2 = pygame.transform.scale(pygame.image.load("Hero_p2.png"), (202, 202))
+        self.image_p1 = pygame.transform.scale(pygame.image.load("Hero_p1.png"), (202, 202))
+        self.image_p2_2 = pygame.transform.scale(pygame.image.load("Hero_p2_2.png"), (202, 202))
+        self.image_p1_2 = pygame.transform.scale(pygame.image.load("Hero_p1_2.png"), (202, 202))
+        self.image = Main_Hero2.image1
+        self.start_x = 0
+        self.start_y = 490
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 490
+        self.y = self.rect.y
+        self.size = [202, 202]
+        self.step = 15
+
+    def check_win(self):
+        if self.rect.x >= 780 and self.rect.y <= 130:
+            return True
+        return False
+
+    def check(self):
+        if self.rect.x <= 180 and self.rect.y < 485:
+            self.rect.y = self.start_y
+        elif self.rect.x <= 445 and self.rect.y < 360:
+            self.rect.y = 360
+        elif self.rect.x <= 710 and self.rect.y < 235:
+            self.rect.y = 235
+
+    def update(self, *args, **kwargs):
+        # print(args)
+        # print(self.rect.x, self.rect.y)
+        if args and args[1][1] and self.rect.x + self.step < width - 100:
+            self.rect = self.rect.move(self.step, 0)
+            if self.image == self.image_p2:
+                self.image = self.image_p1
+            else:
+                self.image = self.image_p2
+            self.check()
+        elif args and args[1][0] and self.rect.x - self.step + 90 > 0:
+            self.rect = self.rect.move(-self.step, 0)
+            if self.image == self.image_p2_2:
+                self.image = self.image_p1_2
+            else:
+                self.image = self.image_p2_2
+            self.check()
+        elif args and args[1][2]:
+            self.rect = self.rect.move(0, -self.step * 8)
+        if pygame.sprite.spritecollideany(self, args[2]):
+            self.rect.x = 0
+            self.rect.y = self.y
+        if self.check_win():
+            # ochistka()
+            pygame.init()
+            size = 1060, 800
+            screen = pygame.display.set_mode(size)
+            screen.fill(pygame.Color('black'))
+            draw(screen)
+            # Редактировано Ксенией
+            # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
+            pamat('Имя персонажа', 0, 0, 2)
+
+
+class FireBall(pygame.sprite.Sprite):
+    pygame.init()
+    screen = pygame.display.set_mode((100, 100))
+    image = pygame.image.load("FireBall.png").convert_alpha()
+    image1 = pygame.transform.scale(image, (100, 100))
+
+    def __init__(self, *group, mobs):
+        super().__init__(mobs)
+        self.size = [100, 100]
+        self.image = self.image1
+        self.rect = self.image.get_rect()
+        self.start_x = 0
+        self.start_y = 0
+        self.finish_x = 1060
+        self.finish_y = 800
+        self.rect.x = self.start_x
+        self.rect.y = self.start_y
+        self.border = 0
+        self.step = 3
+
+    def update(self, *args, **kwargs):
+        # print(self.rect.x)
+        k = 1.325
+        if self.rect.x + 10 >= self.finish_x or self.rect.y + 10 >= self.finish_y:
+            self.rect.x = self.start_x
+            self.rect.y = self.start_y
+        else:
+            self.rect = self.rect.move(self.step * k, self.step)
+
+
 # Сделано Ксенией
 # Данный класс отвечает за анимацию персонажа
 class AnimatedSprite(pygame.sprite.Sprite):
@@ -173,7 +274,7 @@ class Button():
 
 
 # Сделано Ксенией
-#  Данный класс отвечает за фоновое изображение
+#  Данный класс отвечает за фоновое изображение`
 class fonoviy_sloy():
     def __init__(self, puth_to_file):
         self.image = load_image(puth_to_file)
@@ -233,7 +334,9 @@ def ochistka():
     # Спрайты уровень 1
     all_sprites1.empty()
     mobs1.empty()
-
+    # Спрайты уровень 2
+    all_sprites2.empty()
+    mobs2.empty()
     objects.clear()
     fons.clear()
     texts.clear()
@@ -416,12 +519,103 @@ def uroven_1(personazh, ima):
 # Сделано Ксенией
 # Данная функция загружает второй уровень игры
 def uroven_2(personazh, ima):
-    #
-    # Ксения:
-    # Здесь должна происходить загрузка уровня
-    #
-    #
-    pass
+    # Сделано Кириллом
+    ochistka()
+
+    pygame.init()
+
+    size = width, height = 1060, 800
+    screen = pygame.display.set_mode(size)
+
+    # Небо
+    sky = pygame.sprite.Sprite()
+    sky.image = load_image("sky.png")
+    sky.rect = sky.image.get_rect()
+    sky.rect.x = 0
+    sky.rect.y = 0
+    all_sprites2.add(sky)
+
+    # Лес
+
+    forest = pygame.sprite.Sprite()
+    forest.image = pygame.transform.scale(pygame.image.load("forest.png"), (916, 687))
+    forest.rect = sky.image.get_rect()
+    forest.rect.x = 0
+    forest.rect.y = 0
+    all_sprites2.add(forest)
+
+    # Слайм
+
+    FireBall1 = FireBall
+    FireBall1.rect = Slime.image.get_rect()
+    FireBall1.rect.x = 0
+    FireBall1.rect.y = 0
+    FireBall1(mobs=mobs2)
+
+    # Трава\Земля
+    for j in range(3):
+        for i in range(4 - j):
+            grass = pygame.sprite.Sprite()
+            grass.image = load_image("grass.png")
+            grass.rect = grass.image.get_rect()
+            grass.rect.x = j * 265 + i * 265
+            grass.rect.y = 687 - i * 125
+            all_sprites2.add(grass)
+
+    # Герой
+
+    Hero = Main_Hero2
+    Hero.rect = Hero.image.get_rect()
+    Hero.rect.x = 0
+    Hero.rect.y = 490
+    Hero(all_sprites2)
+
+    running1 = True
+    N = 10
+    to_left, to_right, to_up = False, False, False
+
+    while running1:
+        for event in pygame.event.get():
+            if Hero.check_win(Hero):
+                running1 = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    to_left = True
+                if event.key == pygame.K_RIGHT:
+                    to_right = True
+                if event.key == pygame.K_UP:
+                    to_up = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    to_left = False
+                if event.key == pygame.K_RIGHT:
+                    to_right = False
+                if event.key == pygame.K_UP:
+                    to_up = False
+            if event.type == pygame.QUIT:
+                running1 = False
+            all_sprites2.update(event, [to_left, to_right, to_up], mobs2)
+            mobs2.update()
+            # draw(screen)
+        mobs2.update()
+        screen.fill(pygame.Color('white'))
+
+        all_sprites2.draw(screen)
+        mobs2.draw(screen)
+        # draw(screen)
+        # Добавлено Ксенией. Нужно для отображения итогового окна
+        for fon in fons:
+            fon.zapusk(width, height)
+        for text in texts:
+            text.otrisovka()
+        # -------------------
+        pygame.display.flip()
+    if Hero.check_win(Hero):
+        draw(screen)  # Функция отображает конец уровня и выводит экран окончания
+
+    size = width, height = 1000, 600
+    screen = pygame.display.set_mode(size)
+    vibor_urovna()
 
 
 # Сделано Ксенией
@@ -560,6 +754,9 @@ if __name__ == '__main__':
 
     all_sprites1 = pygame.sprite.Group()
     mobs1 = pygame.sprite.Group()
+
+    all_sprites2 = pygame.sprite.Group()
+    mobs2 = pygame.sprite.Group()
 
     startovoe_okno()
 
