@@ -202,6 +202,116 @@ class FireBall(pygame.sprite.Sprite):
             self.rect = self.rect.move(self.step * k, self.step)
 
 
+# Спрайты уровень 3
+class Main_Hero3(pygame.sprite.Sprite):
+    pygame.init()
+    screen = pygame.display.set_mode((100, 100))
+    image = pygame.image.load("Hero_p1.png").convert_alpha()
+    image1 = pygame.transform.scale(image, (202, 202))
+
+    def __init__(self, *group):
+        super().__init__(group[0])
+        self.staff = False
+        self.image_p2 = pygame.transform.scale(pygame.image.load("Hero_p2.png"), (202, 202))
+        self.image_p1 = pygame.transform.scale(pygame.image.load("Hero_p1.png"), (202, 202))
+        self.image_p2_2 = pygame.transform.scale(pygame.image.load("Hero_p2_2.png"), (202, 202))
+        self.image_p1_2 = pygame.transform.scale(pygame.image.load("Hero_p1_2.png"), (202, 202))
+        self.image = Main_Hero3.image1
+        self.start_x = 0
+        self.start_y = 490
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 490
+        self.y = self.rect.y
+        self.size = [202, 202]
+        self.step = 15
+
+    def check(self):
+        if pygame.sprite.spritecollideany(self, Staff_U3) or self.staff:
+            return True
+        return False
+
+    def check_win(self):
+        if self.staff and self.rect.x < 200:
+            return True
+        return False
+
+    def update(self, *args, **kwargs):
+        # print(args)
+        # print(self.rect.x, self.rect.y)
+        self.staff = self.check()
+        if args and args[1][1] and self.rect.x + self.step < width - 100:
+            self.rect = self.rect.move(self.step, 0)
+            if self.image == self.image_p2:
+                self.image = self.image_p1
+            else:
+                self.image = self.image_p2
+        elif args and args[1][0] and self.rect.x - self.step + 90 > 0:
+            self.rect = self.rect.move(-self.step, 0)
+            if self.image == self.image_p2_2:
+                self.image = self.image_p1_2
+            else:
+                self.image = self.image_p2_2
+        elif args and args[1][2]:
+            self.rect = self.rect.move(0, -self.step * 8)
+        if pygame.sprite.spritecollideany(self, args[2]):
+            self.rect.x = 0
+            self.rect.y = self.y
+        if self.check_win():
+            # ochistka()
+            pygame.init()
+            size = 1060, 800
+            screen = pygame.display.set_mode(size)
+            screen.fill(pygame.Color('black'))
+            draw(screen)
+            # Редактировано Ксенией
+            # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
+            pamat('Имя персонажа', 0, 0, 2)
+
+
+class FireBall2(pygame.sprite.Sprite):
+    pygame.init()
+    screen = pygame.display.set_mode((100, 100))
+    image = pygame.image.load("FireBall2.png").convert_alpha()
+    image1 = pygame.transform.scale(image, (100, 100 * 2.09))
+
+    def __init__(self, *group, mobs, x):
+        super().__init__(mobs)
+        self.size = [100, 100]
+        self.image = self.image1
+        self.rect = self.image.get_rect()
+        self.start_x = x
+        self.start_y = 0
+        self.finish_x = x
+        self.finish_y = 800
+        self.rect.x = self.start_x
+        self.rect.y = self.start_y
+        self.border = 0
+        self.step = 0
+
+    def update(self, *args, **kwargs):
+        print(self.rect.y)
+        if self.rect.y + 10 >= 800:
+            self.rect.x = self.start_x
+            self.rect.y = self.start_y
+        else:
+            self.rect = self.rect.move(0, self.step)
+
+
+class Staff(pygame.sprite.Sprite):
+    pygame.init()
+    screen = pygame.display.set_mode((100, 100))
+    image = pygame.image.load("staff.png").convert_alpha()
+    image1 = pygame.transform.scale(image, (100 * 2.43, 100))
+
+    def __init__(self, *group, staff):
+        super().__init__(staff)
+        self.image = self.image1
+        self.rect = self.image.get_rect()
+        self.rect.x = 830
+        self.rect.y = 465
+
+
 # Сделано Ксенией
 # Данный класс отвечает за анимацию персонажа
 class AnimatedSprite(pygame.sprite.Sprite):
@@ -337,6 +447,10 @@ def ochistka():
     # Спрайты уровень 2
     all_sprites2.empty()
     mobs2.empty()
+    # Спрайты уровень 3
+    all_sprites3.empty()
+    mobs3.empty()
+    Staff_U3.empty()
     objects.clear()
     fons.clear()
     texts.clear()
@@ -544,7 +658,7 @@ def uroven_2(personazh, ima):
     forest.rect.y = 0
     all_sprites2.add(forest)
 
-    # Слайм
+    # Фаербол
 
     FireBall1 = FireBall
     FireBall1.rect = Slime.image.get_rect()
@@ -564,11 +678,11 @@ def uroven_2(personazh, ima):
 
     # Герой
 
-    Hero = Main_Hero2
-    Hero.rect = Hero.image.get_rect()
-    Hero.rect.x = 0
-    Hero.rect.y = 490
-    Hero(all_sprites2)
+    Hero1 = Main_Hero2
+    Hero1.rect = Hero1.image.get_rect()
+    Hero1.rect.x = 0
+    Hero1.rect.y = 490
+    Hero1(all_sprites2)
 
     running1 = True
     N = 10
@@ -576,7 +690,7 @@ def uroven_2(personazh, ima):
 
     while running1:
         for event in pygame.event.get():
-            if Hero.check_win(Hero):
+            if Hero1.check_win(Hero1):
                 running1 = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -610,7 +724,7 @@ def uroven_2(personazh, ima):
             text.otrisovka()
         # -------------------
         pygame.display.flip()
-    if Hero.check_win(Hero):
+    if Hero1.check_win(Hero1):
         draw(screen)  # Функция отображает конец уровня и выводит экран окончания
 
     size = width, height = 1000, 600
@@ -621,12 +735,123 @@ def uroven_2(personazh, ima):
 # Сделано Ксенией
 # Данная функция загружает третий уровень игры
 def uroven_3(personazh, ima):
-    #
-    # Ксения:
-    # Здесь должна происходить загрузка уровня
-    #
-    #
-    pass
+    # Сделано Кириллом
+    ochistka()
+
+    pygame.init()
+
+    size = width, height = 1060, 800
+    screen = pygame.display.set_mode(size)
+
+    # Небо
+    sky = pygame.sprite.Sprite()
+    sky.image = load_image("sky.png")
+    sky.rect = sky.image.get_rect()
+    sky.rect.x = 0
+    sky.rect.y = 0
+    all_sprites3.add(sky)
+
+    # Лес
+
+    forest = pygame.sprite.Sprite()
+    forest.image = pygame.transform.scale(pygame.image.load("forest.png"), (916, 687))
+    forest.rect = sky.image.get_rect()
+    forest.rect.x = 0
+    forest.rect.y = 0
+    all_sprites3.add(forest)
+
+    # Фаербол
+
+    FireBall1 = FireBall2
+    FireBall1.rect = Slime.image.get_rect()
+    FireBall1.rect.x = 360
+    FireBall1.rect.y = 0
+    FireBall1(mobs=mobs3, x=360)
+
+    # Фаербол
+
+    FireBall21 = FireBall2
+    FireBall21.rect = Slime.image.get_rect()
+    FireBall21.rect.x = 720
+    FireBall21.rect.y = 0
+    FireBall21(mobs=mobs3, x=720)
+
+    # Посох(я так и не понял, что это и назвал посохом)
+
+    Staff1 = Staff
+    Staff1.rect = Staff.image.get_rect()
+    Staff1.rect.y = 465
+    Staff1.rect.x = 960
+    Staff1(staff=Staff_U3)
+
+    # Трава/Земля
+
+    for i in range(4):
+        grass = pygame.sprite.Sprite()
+        grass.image = load_image("grass.png")
+        grass.rect = grass.image.get_rect()
+        grass.rect.x = i * 265
+        grass.rect.y = 687
+        all_sprites3.add(grass)
+
+    # Герой
+
+    Hero2 = Main_Hero3
+    Hero2.rect = Hero2.image.get_rect()
+    Hero2.rect.x = 0
+    Hero2.rect.y = 465
+    Hero2.staff = False
+    Hero2(all_sprites3)
+
+    running1 = True
+    N = 10
+    to_left, to_right, to_up = False, False, False
+
+    while running1:
+        for event in pygame.event.get():
+            if Hero2.check_win(Hero2):
+                running1 = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    to_left = True
+                if event.key == pygame.K_RIGHT:
+                    to_right = True
+                if event.key == pygame.K_UP:
+                    to_up = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    to_left = False
+                if event.key == pygame.K_RIGHT:
+                    to_right = False
+                if event.key == pygame.K_UP:
+                    to_up = False
+            if event.type == pygame.QUIT:
+                running1 = False
+            all_sprites3.update(event, [to_left, to_right, to_up], mobs3)
+            mobs3.update()
+            Staff_U3.update()
+            print(Hero2.staff)
+            # draw(screen)
+        mobs3.update()
+        screen.fill(pygame.Color('white'))
+
+        all_sprites3.draw(screen)
+        Staff_U3.draw(screen)
+        mobs3.draw(screen)
+        # draw(screen)
+        # Добавлено Ксенией. Нужно для отображения итогового окна
+        for fon in fons:
+            fon.zapusk(width, height)
+        for text in texts:
+            text.otrisovka()
+        # -------------------
+        pygame.display.flip()
+    if Hero2.check_win(Hero2):
+        draw(screen)  # Функция отображает конец уровня и выводит экран окончания
+
+    size = width, height = 1000, 600
+    screen = pygame.display.set_mode(size)
+    vibor_urovna()
 
 
 # Сделано Ксенией
@@ -757,6 +982,10 @@ if __name__ == '__main__':
 
     all_sprites2 = pygame.sprite.Group()
     mobs2 = pygame.sprite.Group()
+
+    all_sprites3 = pygame.sprite.Group()
+    mobs3 = pygame.sprite.Group()
+    Staff_U3 = pygame.sprite.Group()
 
     startovoe_okno()
 
