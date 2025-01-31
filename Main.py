@@ -2,7 +2,14 @@ import os
 import sqlite3 as qt
 import sys
 
+from AnimatedSprite import AnimatedSprite
+from Button import Button
+from BackGroundLayer import BackgroundLayer
+from TextLabel import TextLabel
+
 import pygame
+
+import Params
 
 
 def draw(screen):
@@ -66,7 +73,7 @@ class Main_Hero(pygame.sprite.Sprite):
             self.rect.y = self.y
             args[3].rect.x = 1500
         if self.check_win():
-            # ochistka()
+            # GameClear()
             pygame.init()
             size = 1060, 800
             screen = pygame.display.set_mode(size)
@@ -74,7 +81,7 @@ class Main_Hero(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            pamat('Имя персонажа', 0, 0, 1)
+            LevelResultWindow('Имя персонажа', 0, 0, 1)
 
 
 class Slime(pygame.sprite.Sprite):
@@ -161,7 +168,7 @@ class Main_Hero2(pygame.sprite.Sprite):
             self.rect.x = 0
             self.rect.y = self.y
         if self.check_win():
-            # ochistka()
+            # GameClear()
             pygame.init()
             size = 1060, 800
             screen = pygame.display.set_mode(size)
@@ -169,7 +176,7 @@ class Main_Hero2(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            pamat('Имя персонажа', 0, 0, 2)
+            LevelResultWindow('Имя персонажа', 0, 0, 2)
 
 
 class FireBall(pygame.sprite.Sprite):
@@ -258,7 +265,7 @@ class Main_Hero3(pygame.sprite.Sprite):
             self.rect.x = 0
             self.rect.y = self.y
         if self.check_win():
-            # ochistka()
+            # GameClear()
             pygame.init()
             size = 1060, 800
             screen = pygame.display.set_mode(size)
@@ -266,7 +273,7 @@ class Main_Hero3(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            pamat('Имя персонажа', 0, 0, 2)
+            LevelResultWindow('Имя персонажа', 0, 0, 2)
 
 
 class FireBall2(pygame.sprite.Sprite):
@@ -313,116 +320,6 @@ class Staff(pygame.sprite.Sprite):
 
 
 # Сделано Ксенией
-# Данный класс отвечает за анимацию персонажа
-class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, sheet, columns, rows, x, y):
-        super().__init__(all_sprites)
-        self.frames = []
-        self.cut_sheet(sheet, columns, rows)
-        self.cur_frame = 0
-        self.time = 0
-        self.image = self.frames[self.cur_frame]
-        self.rect = self.rect.move(x, y)
-
-    def cut_sheet(self, sheet, columns, rows):
-        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
-                                sheet.get_height() // rows)
-        for j in range(rows):
-            for i in range(columns):
-                frame_location = (self.rect.w * i, self.rect.h * j)
-                self.frames.append(sheet.subsurface(pygame.Rect(
-                    frame_location, self.rect.size)))
-
-    def update(self):
-        self.time += 1
-        if self.time >= 10:
-            self.time = 0
-            self.cur_frame = (self.cur_frame + 1) % len(self.frames)
-            self.image = self.frames[self.cur_frame]
-
-
-# Сделано Ксенией
-# Данный класс отвечает за кнопки в приложении
-class Button():
-    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.onclickFunction = onclickFunction
-        self.alreadyPressed = True
-
-        self.fillColors = {
-            'normal': '#ffffff',
-            'hover': '#666666',
-            'pressed': '#333333',
-        }
-
-        self.buttonSurface = pygame.Surface((self.width, self.height))
-        self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
-        font = pygame.font.SysFont('Arial', 40)
-        self.buttonSurf = font.render(buttonText, True, (20, 20, 20))
-        objects.append(self)
-
-    def process(self):
-        mousePos = pygame.mouse.get_pos()
-        self.buttonSurface.fill(self.fillColors['normal'])
-        if self.buttonRect.collidepoint(mousePos):
-            self.buttonSurface.fill(self.fillColors['hover'])
-            if pygame.mouse.get_pressed(num_buttons=3)[0]:
-                self.buttonSurface.fill(self.fillColors['pressed'])
-                if not self.alreadyPressed:
-                    self.onclickFunction()
-                    self.alreadyPressed = True
-            else:
-                self.alreadyPressed = False
-        self.buttonSurface.blit(self.buttonSurf, [
-            self.buttonRect.width / 2 - self.buttonSurf.get_rect().width / 2,
-            self.buttonRect.height / 2 - self.buttonSurf.get_rect().height / 2
-        ])
-        screen.blit(self.buttonSurface, self.buttonRect)
-
-
-# Сделано Ксенией
-#  Данный класс отвечает за фоновое изображение`
-class fonoviy_sloy():
-    def __init__(self, puth_to_file):
-        self.image = load_image(puth_to_file)
-        fons.append(self)
-
-    def zapusk(self, shirina=0, visota=0):
-        if shirina == 0 or visota == 0:
-            screen.blit(pygame.transform.scale(self.image, (width, height)), [0, 0])
-        else:
-            screen.blit(pygame.transform.scale(self.image, (shirina, visota)), [0, 0])
-
-
-# Сделано Ксенией
-# Данный класс отвечает за дополнительный текст в приложении
-class svoi_text():
-    def __init__(self, stroka, x, y, redaction=False, color=(200, 100, 0)):
-        self.stroka = stroka
-        self.x = x
-        self.y = y
-        self.color = color
-        self.redaction = redaction
-        self.fontObj = pygame.font.Font(None, 32)
-
-        texts.append(self)
-
-    def otrisovka(self):
-        textSufaceObj = self.fontObj.render(self.stroka, True, self.color, None)
-        screen.blit(textSufaceObj, (self.x, self.y))
-
-    def zamena(self, key):
-        if self.redaction:
-            if key['key'] == 8 and len(self.stroka) >= 1:
-                self.stroka = self.stroka[:-1]
-            else:
-                self.stroka += key['unicode']
-
-
-# Сделано Ксенией
 # Данная функция позволяет загружать изображения, которые лежат рядом с проектом
 def load_image(name, colorkey=None):
     fullname = os.path.join('', name)
@@ -439,7 +336,7 @@ def load_image(name, colorkey=None):
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # При добавлении новых типов объектов обязательно необходимо занести их очистку сюда!!! ЭТО ВАЖНО!!!
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-def ochistka():
+def GameClear():
     all_sprites.empty()
     # Спрайты уровень 1
     all_sprites1.empty()
@@ -458,64 +355,70 @@ def ochistka():
 
 # Сделано Ксенией
 # Данная функция загружает все объекты окна с выбором уровня
-def vibor_urovna():
-    ochistka()
-    fonoviy_sloy('Level_window_fon.png')
-    shirina = 100
-    visota = 100
-    Button((width - shirina) / 2 - 150, (height - visota) / 2 - 75, shirina, visota, '1', lambda: vibor_personazha(1))
-    Button((width - shirina) / 2, (height - visota) / 2 - 75, shirina, visota, '2', lambda: vibor_personazha(2))
-    Button((width - shirina) / 2 + 150, (height - visota) / 2 - 75, shirina, visota, '3', lambda: vibor_personazha(3))
-    Button((width - shirina) / 2 - 150, (height - visota) / 2 + 75, shirina, visota, '4', lambda: vibor_personazha(4))
-    Button((width - shirina) / 2, (height - visota) / 2 + 75, shirina, visota, '5', lambda: vibor_personazha(5))
-    Button((width - shirina) / 2 + 150, (height - visota) / 2 + 75, shirina, visota, '6', lambda: vibor_personazha(6))
-    Button(10, 10, 100, 100, '<===', startovoe_okno)
+def LevelChoiceWindow():
+    GameClear()
+    BackgroundLayer(load_image('Level_window_fon.png'), fons, screen)
+    Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2 - 150, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 - 75,
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '1', lambda: CharacterChoiceWindow(1))
+    Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 - 75,
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '2', lambda: CharacterChoiceWindow(2))
+    Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2 + 150, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 - 75,
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '3', lambda: CharacterChoiceWindow(3))
+    Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2 - 150, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 + 75,
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '4', lambda: CharacterChoiceWindow(4))
+    Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 + 75,
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '5', lambda: CharacterChoiceWindow(5))
+    Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2 + 150, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 + 75,
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '6', lambda: CharacterChoiceWindow(6))
+    Button(10, 10, 100, 100, objects, screen, '<===', MainWindow)
 
 
 # Сделано Ксенией
 # Данная функция загружает все объекты окна с выбором персонажа
-def vibor_personazha(x):
-    ochistka()
-    fonoviy_sloy('Vibor_window_fon.png')
-    shirina = 300
-    visota = 300
-    cord_x_1 = (width - shirina) / 2 - width / 4
-    cord_y_1 = (height - visota) / 2 - height / 8
-    cord_x_2 = (width - shirina) / 2 + width / 4
-    cord_y_2 = (height - visota) / 2 + height / 8
-    AnimatedSprite(pygame.transform.scale(load_image('Personazh.png'), (shirina * 4, visota)), 4, 1, cord_x_1, cord_y_1)
-    AnimatedSprite(pygame.transform.scale(load_image('Personazh2.png'), (shirina * 4, visota)), 4, 1, cord_x_2,
-                   cord_y_2)
-    Button(10, 10, 100, 100, '<===', vibor_urovna)
+def CharacterChoiceWindow(x):
+    GameClear()
+    BackgroundLayer(load_image('Vibor_window_fon.png'), fons, screen)
+    cord_x_1 = (width - Params.WIDTH_CHARACTER_CHOICE_WINDOW) / 2 - width / 4
+    cord_y_1 = (height - Params.HEIGHT_CHARACTER_CHOICE_WINDOW) / 2 - height / 8
+    cord_x_2 = (width - Params.WIDTH_CHARACTER_CHOICE_WINDOW) / 2 + width / 4
+    cord_y_2 = (height - Params.HEIGHT_CHARACTER_CHOICE_WINDOW) / 2 + height / 8
+    AnimatedSprite(pygame.transform.scale(load_image('Personazh.png'),
+                                          (Params.WIDTH_CHARACTER_CHOICE_WINDOW * 4,
+                                           Params.HEIGHT_CHARACTER_CHOICE_WINDOW)), 4, 1, cord_x_1, cord_y_1, all_sprites)
+    AnimatedSprite(pygame.transform.scale(load_image('Personazh2.png'),
+                                          (Params.WIDTH_CHARACTER_CHOICE_WINDOW * 4,
+                                           Params.HEIGHT_CHARACTER_CHOICE_WINDOW)), 4, 1, cord_x_2,
+                   cord_y_2, all_sprites)
+    Button(10, 10, 100, 100, objects, screen, '<===', LevelChoiceWindow)
 
-    svoi_text('Просто нажимайте на клавиатуру!!!', 10, height - 90, color=(200, 200, 255))
-    stroka = svoi_text('Персонаж', 10, height - 50, redaction=True)
+    TextLabel('Просто нажимайте на клавиатуру!!!', 10, height - 90, texts, screen, color=(200, 200, 255))
+    stroka = TextLabel('Персонаж', 10, height - 50, texts, screen, redaction=True)
 
     if x == 1:
-        Button(cord_x_1 + shirina / 3.5, cord_y_1 - 50, 150, 50, 'Выбрать', lambda: uroven_1(1, stroka.stroka))
-        Button(cord_x_2 + shirina / 3.5, cord_y_2 - 50, 150, 50, 'Выбрать', lambda: uroven_1(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_1(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_1(2, stroka.stroka))
     elif x == 2:
-        Button(cord_x_1 + shirina / 3.5, cord_y_1 - 50, 150, 50, 'Выбрать', lambda: uroven_2(1, stroka.stroka))
-        Button(cord_x_2 + shirina / 3.5, cord_y_2 - 50, 150, 50, 'Выбрать', lambda: uroven_2(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_2(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_2(2, stroka.stroka))
     elif x == 3:
-        Button(cord_x_1 + shirina / 3.5, cord_y_1 - 50, 150, 50, 'Выбрать', lambda: uroven_3(1, stroka.stroka))
-        Button(cord_x_2 + shirina / 3.5, cord_y_2 - 50, 150, 50, 'Выбрать', lambda: uroven_3(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_3(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_3(2, stroka.stroka))
     elif x == 4:
-        Button(cord_x_1 + shirina / 3.5, cord_y_1 - 50, 150, 50, 'Выбрать', lambda: uroven_4(1, stroka.stroka))
-        Button(cord_x_2 + shirina / 3.5, cord_y_2 - 50, 150, 50, 'Выбрать', lambda: uroven_4(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_4(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_4(2, stroka.stroka))
     elif x == 5:
-        Button(cord_x_1 + shirina / 3.5, cord_y_1 - 50, 150, 50, 'Выбрать', lambda: uroven_5(1, stroka.stroka))
-        Button(cord_x_2 + shirina / 3.5, cord_y_2 - 50, 150, 50, 'Выбрать', lambda: uroven_5(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_5(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_5(2, stroka.stroka))
     elif x == 6:
-        Button(cord_x_1 + shirina / 3.5, cord_y_1 - 50, 150, 50, 'Выбрать', lambda: uroven_6(1, stroka.stroka))
-        Button(cord_x_2 + shirina / 3.5, cord_y_2 - 50, 150, 50, 'Выбрать', lambda: uroven_6(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_6(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_6(2, stroka.stroka))
 
 
 # Сделано Ксенией
 # Данная функция загружает первый уровень игры
 def uroven_1(personazh, ima):
     # Сделано Кириллом
-    ochistka()
+    GameClear()
 
     pygame.init()
 
@@ -616,9 +519,9 @@ def uroven_1(personazh, ima):
         mobs1.draw(screen)
         # Добавлено Ксенией. Нужно для отображения итогового окна
         for fon in fons:
-            fon.zapusk(width, height)
+            fon.update(width, height)
         for text in texts:
-            text.otrisovka()
+            text.update()
         # -------------------
         # draw(screen)
         pygame.display.flip()
@@ -627,14 +530,14 @@ def uroven_1(personazh, ima):
 
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
-    vibor_urovna()
+    LevelChoiceWindow()
 
 
 # Сделано Ксенией
 # Данная функция загружает второй уровень игры
 def uroven_2(personazh, ima):
     # Сделано Кириллом
-    ochistka()
+    GameClear()
 
     pygame.init()
 
@@ -719,9 +622,9 @@ def uroven_2(personazh, ima):
         # draw(screen)
         # Добавлено Ксенией. Нужно для отображения итогового окна
         for fon in fons:
-            fon.zapusk(width, height)
+            fon.update(width, height)
         for text in texts:
-            text.otrisovka()
+            text.update()
         # -------------------
         pygame.display.flip()
     if Hero1.check_win(Hero1):
@@ -729,14 +632,14 @@ def uroven_2(personazh, ima):
 
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
-    vibor_urovna()
+    LevelChoiceWindow()
 
 
 # Сделано Ксенией
 # Данная функция загружает третий уровень игры
 def uroven_3(personazh, ima):
     # Сделано Кириллом
-    ochistka()
+    GameClear()
 
     pygame.init()
 
@@ -841,9 +744,9 @@ def uroven_3(personazh, ima):
         # draw(screen)
         # Добавлено Ксенией. Нужно для отображения итогового окна
         for fon in fons:
-            fon.zapusk(width, height)
+            fon.update(width, height)
         for text in texts:
-            text.otrisovka()
+            text.update()
         # -------------------
         pygame.display.flip()
     if Hero2.check_win(Hero2):
@@ -851,7 +754,7 @@ def uroven_3(personazh, ima):
 
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
-    vibor_urovna()
+    LevelChoiceWindow()
 
 
 # Сделано Ксенией
@@ -890,8 +793,8 @@ def uroven_6(personazh, ima):
 # Сделано Ксенией
 # Данная функция загружает окно статистики из бд
 def statistika():
-    ochistka()
-    fonoviy_sloy('Spisok_resultatov.png')
+    GameClear()
+    BackgroundLayer(load_image('Spisok_resultatov.png'), fons, screen)
     connection = qt.connect('my_database.db')
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM history')
@@ -900,24 +803,24 @@ def statistika():
     i = 0
     for el in history:
         if i < 5:
-            svoi_text(str(el[1]) + '  ' +
+            TextLabel(str(el[1]) + '  ' +
                       'Уровень - ' + str(el[3]) + '  ' +
                       'Время - ' + str(el[2]) + 'с.  ' +
                       'Скин - ' + str(el[4]),
-                      150, 150 + i * 50, color=(0, 0, 150))
+                      150, 150 + i * 50, texts, screen, color=(0, 0, 150))
         i += 1
 
     connection.close()
-    Button(10, 10, 100, 100, '<===', startovoe_okno)
+    Button(10, 10, 100, 100, objects, screen, '<===', MainWindow)
 
 
 # Сделано Ксенией
 # Данная функция загружает окно с результатами пользователя о прохождении уровня, а также сохраняет их в бд
-def pamat(ima, vrema, skin, uroven):
-    ochistka()
-    fonoviy_sloy('Vospominanie.png')
-    svoi_text(str(ima), width // 2, height // 2, color=(0, 0, 0))
-    svoi_text('Время: ' + str(vrema), width // 2, height // 2 + 40, color=(0, 0, 0))
+def LevelResultWindow(ima, vrema, skin, uroven):
+    GameClear()
+    BackgroundLayer(load_image('Vospominanie.png'), fons, screen)
+    TextLabel(str(ima), width // 2, height // 2, texts, screen, color=(0, 0, 0))
+    TextLabel('Время: ' + str(vrema), width // 2, height // 2 + 40, texts, screen, color=(0, 0, 0))
     connection = qt.connect('my_database.db')
     cursor = connection.cursor()
     cursor.execute('INSERT INTO history (name, time, skin, level) VALUES (?, ?, ?, ?)',
@@ -928,37 +831,50 @@ def pamat(ima, vrema, skin, uroven):
 
 # Сделано Ксенией
 # Данная функция закрывает приложение
-def vihod():
+def GameCancel():
     pygame.quit()
     sys.exit()
 
 
 # Сделано Ксенией
 # Данная функция загружает все объекты стартового окна
-def startovoe_okno():
-    ochistka()
-    fonoviy_sloy('Start_window_fon.png')
-    shirina = 300
-    visota = 100
-    Button((width - shirina) / 2, (height - visota) / 2 - 150, shirina, visota, 'Выбрать уровень', vibor_urovna)
-    Button((width - shirina) / 2, (height - visota) / 2, shirina, visota, 'Статистика', statistika)
-    Button((width - shirina) / 2, (height - visota) / 2 + 150, shirina, visota, 'Выйти из игры', vihod)
+def MainWindow():
+    GameClear()
+    BackgroundLayer(load_image('Start_window_fon.png'), fons, screen)
+    Button((width - Params.WIDHT_MAIN_WINDOW) / 2, (height - Params.HEIGHT_MAIN_WINDOW) / 2 - 150,
+           Params.WIDHT_MAIN_WINDOW, Params.HEIGHT_MAIN_WINDOW, objects, screen, 'Выбрать уровень', LevelChoiceWindow)
+    Button((width - Params.WIDHT_MAIN_WINDOW) / 2, (height - Params.HEIGHT_MAIN_WINDOW) / 2,
+           Params.WIDHT_MAIN_WINDOW, Params.HEIGHT_MAIN_WINDOW, objects, screen, 'Статистика', statistika)
+    Button((width - Params.WIDHT_MAIN_WINDOW) / 2, (height - Params.HEIGHT_MAIN_WINDOW) / 2 + 150,
+           Params.WIDHT_MAIN_WINDOW, Params.HEIGHT_MAIN_WINDOW, objects, screen, 'Выйти из игры', GameCancel)
 
 
 # Сделано Ксенией
 # Данная функция создает бд в случае ее отсутствия
-def sozdanie_bd():
+def BDCreation():
     connection = qt.connect('my_database.db')
     cursor = connection.cursor()
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS history (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    time INTEGER,
-    skin INTEGER, 
-    level INTEGER
-    )
-    ''')
+        CREATE TABLE IF NOT EXISTS history (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        time INTEGER,
+        skin INTEGER, 
+        level INTEGER
+        )
+        ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS levels (
+        id INTEGER PRIMARY KEY,
+        name TEXT
+        )
+        ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS skins (
+        id INTEGER PRIMARY KEY,
+        name TEXT
+        )
+        ''')
     connection.commit()
     connection.close()
 
@@ -966,10 +882,10 @@ def sozdanie_bd():
 # Сделано Ксенией
 # Запуск программы
 if __name__ == '__main__':
-    sozdanie_bd()
+    BDCreation()
     pygame.init()
 
-    size = width, height = 1000, 600
+    size = width, height = Params.WIDTH, Params.HEIGHT
     screen = pygame.display.set_mode(size)
 
     all_sprites = pygame.sprite.Group()
@@ -987,7 +903,7 @@ if __name__ == '__main__':
     mobs3 = pygame.sprite.Group()
     Staff_U3 = pygame.sprite.Group()
 
-    startovoe_okno()
+    MainWindow()
 
     running = True
 
@@ -999,7 +915,7 @@ if __name__ == '__main__':
     # Лучше не изменять здесь ничего, а только добавлять, иначе можно случайно все сломать!!!
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     while running:
-        pygame.time.Clock().tick(60)
+        pygame.time.Clock().tick(Params.TICKS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -1007,16 +923,16 @@ if __name__ == '__main__':
                 pass
             if event.type == pygame.KEYDOWN:
                 for text in texts:
-                    text.zamena(event.dict)
+                    text.TextRedaction(event.dict)
         screen.fill(pygame.Color('white'))
         for fon in fons:
-            fon.zapusk()
+            fon.update()
         all_sprites.draw(screen)
         all_sprites.update()
         for object in objects:
             object.process()
         for text in texts:
-            text.otrisovka()
+            text.update()
         pygame.display.flip()
     pygame.quit()
 
