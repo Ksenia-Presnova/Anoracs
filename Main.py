@@ -1,15 +1,14 @@
 import os
 import sqlite3 as qt
 import sys
-
-from AnimatedSprite import AnimatedSprite
-from Button import Button
-from BackGroundLayer import BackgroundLayer
-from TextLabel import TextLabel
-
-import pygame
+import datetime
 
 import Params
+import pygame
+from AnimatedSprite import AnimatedSprite
+from BackGroundLayer import BackgroundLayer
+from Button import Button
+from TextLabel import TextLabel
 
 
 def draw(screen):
@@ -81,7 +80,7 @@ class Main_Hero(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            LevelResultWindow('Имя персонажа', 0, 0, 1)
+            # LevelResultWindow('Имя персонажа', 0, 0, 1)
 
 
 class Slime(pygame.sprite.Sprite):
@@ -176,7 +175,7 @@ class Main_Hero2(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            LevelResultWindow('Имя персонажа', 0, 0, 2)
+            # LevelResultWindow('Имя персонажа', 0, 0, 2)
 
 
 class FireBall(pygame.sprite.Sprite):
@@ -273,7 +272,7 @@ class Main_Hero3(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            LevelResultWindow('Имя персонажа', 0, 0, 2)
+            # LevelResultWindow('Имя персонажа', 0, 0, 3)
 
 
 class FireBall2(pygame.sprite.Sprite):
@@ -294,10 +293,10 @@ class FireBall2(pygame.sprite.Sprite):
         self.rect.x = self.start_x
         self.rect.y = self.start_y
         self.border = 0
-        self.step = 0
+        self.step = 2
 
     def update(self, *args, **kwargs):
-        print(self.rect.y)
+        # print(self.rect.y)
         if self.rect.y + 10 >= 800:
             self.rect.x = self.start_x
             self.rect.y = self.start_y
@@ -359,17 +358,23 @@ def LevelChoiceWindow():
     GameClear()
     BackgroundLayer(load_image('Level_window_fon.png'), fons, screen)
     Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2 - 150, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 - 75,
-           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '1', lambda: CharacterChoiceWindow(1))
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '1',
+           lambda: CharacterChoiceWindow(1))
     Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 - 75,
-           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '2', lambda: CharacterChoiceWindow(2))
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '2',
+           lambda: CharacterChoiceWindow(2))
     Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2 + 150, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 - 75,
-           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '3', lambda: CharacterChoiceWindow(3))
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '3',
+           lambda: CharacterChoiceWindow(3))
     Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2 - 150, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 + 75,
-           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '4', lambda: CharacterChoiceWindow(4))
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '4',
+           lambda: CharacterChoiceWindow(4))
     Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 + 75,
-           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '5', lambda: CharacterChoiceWindow(5))
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '5',
+           lambda: CharacterChoiceWindow(5))
     Button((width - Params.WIDTH_LEVEL_CHOICE_WINDOW) / 2 + 150, (height - Params.HEIGHT_LEVEL_CHOICE_WINDOW) / 2 + 75,
-           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '6', lambda: CharacterChoiceWindow(6))
+           Params.WIDTH_LEVEL_CHOICE_WINDOW, Params.HEIGHT_LEVEL_CHOICE_WINDOW, objects, screen, '6',
+           lambda: CharacterChoiceWindow(6))
     Button(10, 10, 100, 100, objects, screen, '<===', MainWindow)
 
 
@@ -384,7 +389,8 @@ def CharacterChoiceWindow(x):
     cord_y_2 = (height - Params.HEIGHT_CHARACTER_CHOICE_WINDOW) / 2 + height / 8
     AnimatedSprite(pygame.transform.scale(load_image('Personazh.png'),
                                           (Params.WIDTH_CHARACTER_CHOICE_WINDOW * 4,
-                                           Params.HEIGHT_CHARACTER_CHOICE_WINDOW)), 4, 1, cord_x_1, cord_y_1, all_sprites)
+                                           Params.HEIGHT_CHARACTER_CHOICE_WINDOW)), 4, 1, cord_x_1, cord_y_1,
+                   all_sprites)
     AnimatedSprite(pygame.transform.scale(load_image('Personazh2.png'),
                                           (Params.WIDTH_CHARACTER_CHOICE_WINDOW * 4,
                                            Params.HEIGHT_CHARACTER_CHOICE_WINDOW)), 4, 1, cord_x_2,
@@ -395,23 +401,35 @@ def CharacterChoiceWindow(x):
     stroka = TextLabel('Персонаж', 10, height - 50, texts, screen, redaction=True)
 
     if x == 1:
-        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_1(1, stroka.stroka))
-        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_1(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_1(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_1(2, stroka.stroka))
     elif x == 2:
-        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_2(1, stroka.stroka))
-        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_2(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_2(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_2(2, stroka.stroka))
     elif x == 3:
-        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_3(1, stroka.stroka))
-        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_3(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_3(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_3(2, stroka.stroka))
     elif x == 4:
-        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_4(1, stroka.stroka))
-        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_4(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_4(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_4(2, stroka.stroka))
     elif x == 5:
-        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_5(1, stroka.stroka))
-        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_5(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_5(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_5(2, stroka.stroka))
     elif x == 6:
-        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_6(1, stroka.stroka))
-        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen, 'Выбрать', lambda: uroven_6(2, stroka.stroka))
+        Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_6(1, stroka.stroka))
+        Button(cord_x_2 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_2 - 50, 150, 50, objects, screen,
+               'Выбрать', lambda: uroven_6(2, stroka.stroka))
 
 
 # Сделано Ксенией
@@ -424,6 +442,7 @@ def uroven_1(personazh, ima):
 
     size = width, height = 1060, 800
     screen = pygame.display.set_mode(size)
+    start_time = datetime.datetime.now()
 
     # Спрайт отвечающий за задний фон(небо)
     sky = pygame.sprite.Sprite()
@@ -527,9 +546,11 @@ def uroven_1(personazh, ima):
         pygame.display.flip()
     if Hero.check_win(Hero):
         draw(screen)  # Функция отображает конец уровня и выводит экран окончания
-
+    end_time = datetime.datetime.now()
+    res = end_time - start_time
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
+    LevelResultWindow(ima, personazh, str(res), 1)
     LevelChoiceWindow()
 
 
@@ -543,6 +564,7 @@ def uroven_2(personazh, ima):
 
     size = width, height = 1060, 800
     screen = pygame.display.set_mode(size)
+    start_time = datetime.datetime.now()
 
     # Небо
     sky = pygame.sprite.Sprite()
@@ -629,9 +651,11 @@ def uroven_2(personazh, ima):
         pygame.display.flip()
     if Hero1.check_win(Hero1):
         draw(screen)  # Функция отображает конец уровня и выводит экран окончания
-
+    end_time = datetime.datetime.now()
+    res = end_time - start_time
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
+    LevelResultWindow(ima, personazh, res, 1)
     LevelChoiceWindow()
 
 
@@ -645,6 +669,7 @@ def uroven_3(personazh, ima):
 
     size = width, height = 1060, 800
     screen = pygame.display.set_mode(size)
+    start_time = datetime.datetime.now()
 
     # Небо
     sky = pygame.sprite.Sprite()
@@ -733,7 +758,7 @@ def uroven_3(personazh, ima):
             all_sprites3.update(event, [to_left, to_right, to_up], mobs3)
             mobs3.update()
             Staff_U3.update()
-            print(Hero2.staff)
+            # print(Hero2.staff)
             # draw(screen)
         mobs3.update()
         screen.fill(pygame.Color('white'))
@@ -751,9 +776,11 @@ def uroven_3(personazh, ima):
         pygame.display.flip()
     if Hero2.check_win(Hero2):
         draw(screen)  # Функция отображает конец уровня и выводит экран окончания
-
+    end_time = datetime.datetime.now()
+    res = end_time - start_time
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
+    LevelResultWindow(ima, res, personazh, 1)
     LevelChoiceWindow()
 
 
@@ -824,7 +851,7 @@ def LevelResultWindow(ima, vrema, skin, uroven):
     connection = qt.connect('my_database.db')
     cursor = connection.cursor()
     cursor.execute('INSERT INTO history (name, time, skin, level) VALUES (?, ?, ?, ?)',
-                   (ima, vrema, skin, uroven))
+                   (ima, str(vrema), skin, uroven))
     connection.commit()
     connection.close()
 
@@ -935,4 +962,3 @@ if __name__ == '__main__':
             text.update()
         pygame.display.flip()
     pygame.quit()
-
