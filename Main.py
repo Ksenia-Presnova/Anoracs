@@ -24,7 +24,10 @@ class Main_Hero(pygame.sprite.Sprite):
     image1 = pygame.transform.scale(image, (202, 202))
 
     def __init__(self, *group):
-        super().__init__(group)
+        super().__init__(group[0])
+        self.name = group[1]
+        self.skin = group[2]
+        self.time = group[3]
         self.image_p2 = pygame.transform.scale(pygame.image.load("Hero_p2.png"), (202, 202))
         self.image_p1 = pygame.transform.scale(pygame.image.load("Hero_p1.png"), (202, 202))
         self.image_p2_2 = pygame.transform.scale(pygame.image.load("Hero_p2_2.png"), (202, 202))
@@ -80,7 +83,7 @@ class Main_Hero(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            # LevelResultWindow('Имя персонажа', 0, 0, 1)
+            LevelResultWindow(self.name, datetime.datetime.now() - self.time, self.skin, 1)
 
 
 class Slime(pygame.sprite.Sprite):
@@ -117,6 +120,9 @@ class Main_Hero2(pygame.sprite.Sprite):
 
     def __init__(self, *group):
         super().__init__(group[0])
+        self.name = group[1]
+        self.skin = group[2]
+        self.time = group[3]
         self.image_p2 = pygame.transform.scale(pygame.image.load("Hero_p2.png"), (202, 202))
         self.image_p1 = pygame.transform.scale(pygame.image.load("Hero_p1.png"), (202, 202))
         self.image_p2_2 = pygame.transform.scale(pygame.image.load("Hero_p2_2.png"), (202, 202))
@@ -175,7 +181,7 @@ class Main_Hero2(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            # LevelResultWindow('Имя персонажа', 0, 0, 2)
+            LevelResultWindow(self.name, datetime.datetime.now() - self.time, self.skin, 2)
 
 
 class FireBall(pygame.sprite.Sprite):
@@ -217,6 +223,9 @@ class Main_Hero3(pygame.sprite.Sprite):
 
     def __init__(self, *group):
         super().__init__(group[0])
+        self.name = group[1]
+        self.skin = group[2]
+        self.time = group[3]
         self.staff = False
         self.image_p2 = pygame.transform.scale(pygame.image.load("Hero_p2.png"), (202, 202))
         self.image_p1 = pygame.transform.scale(pygame.image.load("Hero_p1.png"), (202, 202))
@@ -272,7 +281,7 @@ class Main_Hero3(pygame.sprite.Sprite):
             draw(screen)
             # Редактировано Ксенией
             # В функцию необходимо передать имя персонажа, затем время прохождения, выбранный скин (0 или 1), и номер уровня
-            # LevelResultWindow('Имя персонажа', 0, 0, 3)
+            LevelResultWindow(self.name, datetime.datetime.now() - self.time, self.skin, 3)
 
 
 class FireBall2(pygame.sprite.Sprite):
@@ -398,7 +407,7 @@ def CharacterChoiceWindow(x):
     Button(10, 10, 100, 100, objects, screen, '<===', LevelChoiceWindow)
 
     TextLabel('Просто нажимайте на клавиатуру!!!', 10, height - 90, texts, screen, color=(200, 200, 255))
-    stroka = TextLabel('Персонаж', 10, height - 50, texts, screen, redaction=True)
+    stroka = TextLabel('Player', 10, height - 50, texts, screen, redaction=True)
 
     if x == 1:
         Button(cord_x_1 + Params.WIDTH_CHARACTER_CHOICE_WINDOW / 3.5, cord_y_1 - 50, 150, 50, objects, screen,
@@ -502,7 +511,7 @@ def uroven_1(personazh, ima):
     Hero.rect = Hero.image.get_rect()
     Hero.rect.x = 0
     Hero.rect.y = 500
-    Hero(all_sprites1)
+    Hero(all_sprites1, ima, personazh, start_time)
 
     running1 = True
     N = 10
@@ -546,11 +555,8 @@ def uroven_1(personazh, ima):
         pygame.display.flip()
     if Hero.check_win(Hero):
         draw(screen)  # Функция отображает конец уровня и выводит экран окончания
-    end_time = datetime.datetime.now()
-    res = end_time - start_time
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
-    LevelResultWindow(ima, personazh, str(res), 1)
     LevelChoiceWindow()
 
 
@@ -607,7 +613,7 @@ def uroven_2(personazh, ima):
     Hero1.rect = Hero1.image.get_rect()
     Hero1.rect.x = 0
     Hero1.rect.y = 490
-    Hero1(all_sprites2)
+    Hero1(all_sprites2, ima, personazh, start_time)
 
     running1 = True
     N = 10
@@ -651,11 +657,8 @@ def uroven_2(personazh, ima):
         pygame.display.flip()
     if Hero1.check_win(Hero1):
         draw(screen)  # Функция отображает конец уровня и выводит экран окончания
-    end_time = datetime.datetime.now()
-    res = end_time - start_time
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
-    LevelResultWindow(ima, personazh, res, 1)
     LevelChoiceWindow()
 
 
@@ -729,7 +732,7 @@ def uroven_3(personazh, ima):
     Hero2.rect.x = 0
     Hero2.rect.y = 465
     Hero2.staff = False
-    Hero2(all_sprites3)
+    Hero2(all_sprites3, ima, personazh, start_time)
 
     running1 = True
     N = 10
@@ -776,11 +779,8 @@ def uroven_3(personazh, ima):
         pygame.display.flip()
     if Hero2.check_win(Hero2):
         draw(screen)  # Функция отображает конец уровня и выводит экран окончания
-    end_time = datetime.datetime.now()
-    res = end_time - start_time
     size = width, height = 1000, 600
     screen = pygame.display.set_mode(size)
-    LevelResultWindow(ima, res, personazh, 1)
     LevelChoiceWindow()
 
 
@@ -831,9 +831,9 @@ def statistika():
     for el in history:
         if i < 5:
             TextLabel(str(el[1]) + '  ' +
-                      'Уровень - ' + str(el[3]) + '  ' +
-                      'Время - ' + str(el[2]) + 'с.  ' +
-                      'Скин - ' + str(el[4]),
+                      'Уровень - ' + str(el[4]) + '  ' +
+                      'Время - ' + str(el[2]) + '  ' +
+                      'Скин - ' + str(el[3]),
                       150, 150 + i * 50, texts, screen, color=(0, 0, 150))
         i += 1
 
@@ -845,6 +845,8 @@ def statistika():
 # Данная функция загружает окно с результатами пользователя о прохождении уровня, а также сохраняет их в бд
 def LevelResultWindow(ima, vrema, skin, uroven):
     GameClear()
+    time = str(vrema).split(':')
+    vrema = str(int(time[0])) + " ч " + str(int(time[1])) + " мин " + str(int(time[2].split('.')[0])) + " c"
     BackgroundLayer(load_image('Vospominanie.png'), fons, screen)
     TextLabel(str(ima), width // 2, height // 2, texts, screen, color=(0, 0, 0))
     TextLabel('Время: ' + str(vrema), width // 2, height // 2 + 40, texts, screen, color=(0, 0, 0))
